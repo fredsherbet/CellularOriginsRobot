@@ -36,36 +36,42 @@ class ToyRobot:
         self.direction = None
 
     def move(self) -> None:
-        if self.active:
-            move = WORLD_DATA["DIRECTIONS"][self.direction]["MOVE"]
-            x = self.position[0] + move[0]
-            y = self.position[1] + move[1]
-            if 0 <= x < WORLD_DATA["GRID"][0] and 0 <= y < WORLD_DATA["GRID"][1]:
-                self.position = (x, y)
+        if not self.active:
+            return
+        move = WORLD_DATA["DIRECTIONS"][self.direction]["MOVE"]
+        x = self.position[0] + move[0]
+        y = self.position[1] + move[1]
+        if 0 <= x < WORLD_DATA["GRID"][0] and 0 <= y < WORLD_DATA["GRID"][1]:
+            self.position = (x, y)
 
     def left(self) -> None:
-        if self.active:
-            self.direction = WORLD_DATA["DIRECTIONS"][self.direction]["LEFT"]
+        if not self.active:
+            return
+        self.direction = WORLD_DATA["DIRECTIONS"][self.direction]["LEFT"]
 
     def right(self) -> None:
-        if self.active:
-            self.direction = WORLD_DATA["DIRECTIONS"][self.direction]["RIGHT"]
+        if not self.active:
+            return
+        self.direction = WORLD_DATA["DIRECTIONS"][self.direction]["RIGHT"]
 
     def place(self, x: int, y: int, direction: str) -> None:
-        if not self.active:
-            if 0 <= x < WORLD_DATA["GRID"][0] and 0 <= y < WORLD_DATA["GRID"][1]:
-                if direction in WORLD_DATA["DIRECTIONS"]:
-                    self.position = (x, y)
-                    self.active = True
-                    self.direction = direction
-                else:
-                    print("Invalid direction. Use one of NORTH, SOUTH, EAST, WEST.")
-            else:
-                print("Invalid position. Position should be within {}x{} grid.".format(WORLD_DATA["GRID"][0], WORLD_DATA["GRID"][1]))
+        if self.active:
+            return
+        if not (0 <= x < WORLD_DATA["GRID"][0] and 0 <= y < WORLD_DATA["GRID"][1]):
+            print("Invalid position. Position should be within {}x{} grid.".format(WORLD_DATA["GRID"][0], WORLD_DATA["GRID"][1]))
+            return
+        if direction not in WORLD_DATA["DIRECTIONS"]:
+            print("Invalid direction. Use one of NORTH, SOUTH, EAST, WEST.")
+            return
+
+        self.position = (x, y)
+        self.active = True
+        self.direction = direction
 
     def report(self) -> None:
-        if self.active:
-            print(self.position[0], self.position[1], self.direction)
+        if not self.active:
+            return
+        print(self.position[0], self.position[1], self.direction)
 
 
 def main(args = None) -> None:
@@ -90,7 +96,7 @@ def main(args = None) -> None:
             elif command == "LEFT":
                 robot.left()
             elif command == "RIGHT":
-                robot.right()      
+                robot.right()
             else:
                 command = command.split()
                 if len(command) == 2:
